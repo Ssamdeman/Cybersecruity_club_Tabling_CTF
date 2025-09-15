@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UMB Cyber Club Challenge</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+
+    <style>
+      :root {
+        --dark-navy: #0d182a;
+        --medium-navy: #1a324f;
+        --bright-blue: #2a6190;
+        --white: #ffffff;
+        --light-gray: #f5f7fa;
+        --success-green: #2ecc71;
+        --success-green-bg: #e8f8f5;
+        --error-red: #e74c3c;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        color: var(--dark-navy);
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        transition: background-color 0.5s ease;
+      }
+
+      body.advanced-success {
+        background: var(--success-green-bg);
+      }
+
+      .challenge-container {
+        max-width: 700px;
+        width: 90%;
+        text-align: center;
+        background: var(--white);
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(13, 24, 42, 0.1);
+        animation: fadeInUp 0.8s ease;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .challenge-logo {
+        max-width: 250px;
+        height: auto;
+        margin: 0 auto 1rem;
+        margin-bottom: -1rem;
+      }
+
+      .target-code {
+        font-family: "Courier New", Courier, monospace;
+        background-color: var(--light-gray);
+        padding: 1rem;
+        border-radius: 8px;
+        word-wrap: break-word;
+        color: var(--medium-navy);
+        border: 1px solid #e0e0e0;
+        margin: 2rem 0;
+        font-size: 1.1rem;
+      }
+
+      .hint {
+        color: var(--medium-navy);
+        opacity: 0.8;
+        margin-bottom: 2rem;
+        font-style: italic;
+      }
+
+      .flag-input-group {
+        display: flex;
+        gap: 1rem;
+        flex-direction: column;
+      }
+
+      .flag-input {
+        flex-grow: 1;
+        padding: 1rem;
+        font-size: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 50px;
+        transition: border-color 0.3s ease;
+        text-align: center;
+      }
+
+      .flag-input:focus {
+        outline: none;
+        border-color: var(--bright-blue);
+      }
+
+      .btn {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--bright-blue),
+          var(--medium-navy)
+        );
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(42, 97, 144, 0.4);
+      }
+      
+      .btn-secondary {
+        background: white;
+        color: var(--medium-navy);
+        border: 2px solid var(--bright-blue);
+        margin-top: 0.5rem;
+      }
+      
+      .btn-secondary:hover {
+         background: var(--bright-blue);
+         color: white;
+      }
+
+      .success-message {
+        display: none; /* Hidden by default */
+        margin-top: 2rem;
+        padding: 1.5rem;
+        border-radius: 12px;
+        animation: fadeInUp 0.5s;
+        border: 1px solid;
+      }
+      
+      .success-message-standard {
+        background-color: #f0f8ff;
+        border-color: var(--bright-blue);
+      }
+
+      .success-message-advanced {
+        background-color: var(--success-green-bg);
+        border-color: var(--success-green);
+      }
+      
+      .success-message h3 {
+        margin-bottom: 0.5rem;
+        color: var(--dark-navy);
+      }
+      
+      .success-message p {
+         color: var(--medium-navy);
+         margin-bottom: 1.5rem;
+      }
+      
+      /* Animation for incorrect guess */
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+      }
+      
+      .shake-animation {
+        animation: shake 0.5s ease-in-out;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="challenge-container">
+      <img
+        src="Main_logo_transparent.png"
+        alt="Cyber Club Logo"
+        class="challenge-logo"
+      />
+
+      <div class="target-code" id="target-code">
+        WW91IGFyZSBhbWF6aW5nLiBXRUxDT01FIFRPIENURiBXT1JMRC4gWU9VIEZPVU5EIFRIRSBGTEFH
+      </div>
+
+      <p class="hint">
+        "Some messages are ciphers or encoded. An artificial intelligence could help. How do you start your problem-solving process?"
+      </p>
+
+      <div class="flag-input-group">
+        <input
+          type="text"
+          id="flag-input"
+          class="flag-input"
+          placeholder="Enter your flag here"
+        />
+        <button id="submit-btn" class="btn btn-primary">Submit Flag</button>
+      </div>
+
+      <div id="success-standard" class="success-message success-message-standard">
+          <h3>Correct! You found your First flag!</h3>
+          <p>This is the first step. Join us to learn more and tackle bigger challenges.</p>
+          <a href="https://ssamdeman.github.io/Cybersecurityclub/" class="btn btn-secondary">Join our Club</a>
+      </div>
+
+      <div id="success-advanced" class="success-message success-message-advanced">
+          <h3>WOW! ADVANCED CLEARANCE GRANTED!</h3>
+          <p>You didn't just solve the puzzle—you looked behind the curtain. We need minds like yours. Follow the special link below to register your skills.</p>
+          <a href="#https://forms.cloud.microsoft/r/RnjYxeAW23" class="btn btn-primary">Special Registration</a>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+
+        const beginnerFlagHash = '42ed8f9bfac52e28ebd4a788ec8b1e70904d781b83941374a344515b0e2f590a';
+
+
+        const submitBtn = document.getElementById('submit-btn');
+        const flagInput = document.getElementById('flag-input');
+        const successStandardDiv = document.getElementById('success-standard');
+        const successAdvancedDiv = document.getElementById('success-advanced');
+        const bodyEl = document.body;
+
+
+        const checkFlag = () => {
+            const userInput = flagInput.value.trim();
+
+            if (!userInput) return;
+            
+            if (userInput === "WOW_YOU_FOUND_MORE_THAN_YOU_THINK") {
+                bodyEl.classList.add('advanced-success');
+                successStandardDiv.style.display = 'none';
+                successAdvancedDiv.style.display = 'block';
+                return;
+            }
+
+            const userInputHash = sha256(userInput);
+            
+            if (userInputHash === beginnerFlagHash) {
+                bodyEl.classList.remove('advanced-success');
+                successAdvancedDiv.style.display = 'none';
+                successStandardDiv.style.display = 'block';
+                return;
+            }
+            
+            flagInput.classList.add('shake-animation');
+            flagInput.style.borderColor = 'var(--error-red)';
+
+            setTimeout(() => {
+                flagInput.classList.remove('shake-animation');
+                flagInput.style.borderColor = '#e0e0e0';
+            }, 600);
+        };
+
+        submitBtn.addEventListener('click', checkFlag);
+
+        flagInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                checkFlag();
+            }
+        });
+      });
+    </script>
+  </body>
+</html>
