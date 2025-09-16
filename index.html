@@ -36,6 +36,7 @@
         align-items: center;
         min-height: 100vh;
         transition: background-color 0.5s ease;
+        padding: 1rem; /* Added padding for small screens */
       }
 
       body.advanced-success {
@@ -44,7 +45,7 @@
 
       .challenge-container {
         max-width: 700px;
-        width: 90%;
+        width: 100%; /* Changed from 90% to 100% to work with body padding */
         text-align: center;
         background: var(--white);
         padding: 3rem;
@@ -65,7 +66,7 @@
       }
 
       .challenge-logo {
-        max-width: 550px;
+        max-width: 450px; /* Reduced original size slightly */
         height: auto;
         margin: 0 auto 1rem;
         margin-bottom: -1rem;
@@ -77,6 +78,8 @@
         padding: 1rem;
         border-radius: 8px;
         word-wrap: break-word;
+        /* Added word-break to force line breaks */
+        word-break: break-all;
         color: var(--medium-navy);
         border: 1px solid #e0e0e0;
         margin: 2rem 0;
@@ -145,8 +148,8 @@
       }
       
       .btn-secondary:hover {
-         background: var(--bright-blue);
-         color: white;
+        background: var(--bright-blue);
+        color: white;
       }
 
       .success-message {
@@ -174,8 +177,8 @@
       }
       
       .success-message p {
-         color: var(--medium-navy);
-         margin-bottom: 1.5rem;
+        color: var(--medium-navy);
+        margin-bottom: 1.5rem;
       }
       
       /* Animation for incorrect guess */
@@ -188,6 +191,42 @@
       .shake-animation {
         animation: shake 0.5s ease-in-out;
       }
+
+      /* --- START: Mobile Responsive Styles --- */
+      @media (max-width: 768px) {
+        body {
+          /* Allows scrolling on mobile by not forcing vertical center */
+          align-items: flex-start;
+          padding: 1rem;
+        }
+
+        .challenge-container {
+          /* Reduce padding for smaller screens */
+          padding: 2rem 1.5rem;
+          margin-top: 1rem;
+        }
+
+        .challenge-logo {
+          /* Make the logo much smaller on mobile */
+          max-width: 150px;
+          margin-bottom: 1rem;
+        }
+
+        .target-code {
+          /* Reduce font size to help text fit better */
+          font-size: 0.9rem;
+        }
+
+        .hint, .flag-input, .btn, .success-message p {
+            /* Adjust font sizes for other elements */
+            font-size: 0.95rem;
+        }
+        
+        .success-message h3 {
+            font-size: 1.1rem;
+        }
+      }
+      /* --- END: Mobile Responsive Styles --- */
 
     </style>
   </head>
@@ -204,7 +243,8 @@
       </div>
 
       <p class="hint">
-        "Some messages are ciphers or encoded. An artificial intelligence could help. How do you start your problem-solving process?"
+        "Some messages are ciphers or encoded. An artificial intelligence could
+        help. How do you start your problem-solving process?"
       </p>
 
       <div class="flag-input-group">
